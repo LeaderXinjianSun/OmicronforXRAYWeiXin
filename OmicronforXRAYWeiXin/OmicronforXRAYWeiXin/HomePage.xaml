@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="OmicronforXRAYWeiXin.HomePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mvvm="clr-namespace:BingLibrary.hjb;assembly=BingLibrary"
+             xmlns:local="clr-namespace:OmicronforXRAYWeiXin"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.Background>
+                <ImageBrush ImageSource="picture\timg.jpg"/>
+            </Grid.Background>
+        </Grid>
+        <local:MessagePrint Grid.Row="1"></local:MessagePrint>
+        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+            <TextBlock Text="工位1条码:" FontSize="16" Margin="5,10"></TextBlock>
+            <TextBox VerticalContentAlignment="Center" Width="180" IsReadOnly="True" Text="{Binding BarcodeString1}"></TextBox>
+            <Button HorizontalAlignment="Right" Width="80" Content="扫码" FontSize="16" Margin="5,10" Command="{mvvm:ActionAuto ScanAction}"></Button>
+            <TextBlock Text="工位2条码:" FontSize="16"></TextBlock>
+            <TextBox Width="180" IsReadOnly="True" Text="{Binding BarcodeString2}" Margin="5,10"></TextBox>
+        </StackPanel>
+    </Grid>
+</UserControl>
