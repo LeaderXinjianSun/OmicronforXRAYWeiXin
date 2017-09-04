@@ -18,7 +18,7 @@
         </Grid.ColumnDefinitions>
         <Grid>
             <Grid.Background>
-                <ImageBrush ImageSource="picture\timg.jpg"/>
+                <ImageBrush ImageSource="picture\微信图片_20170904094027.png"/>
             </Grid.Background>
         </Grid>
         <local:MessagePrint Grid.Row="1"></local:MessagePrint>

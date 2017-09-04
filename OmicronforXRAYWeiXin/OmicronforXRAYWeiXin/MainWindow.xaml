@@ -17,9 +17,45 @@
             <RowDefinition Height="4*"></RowDefinition>
         </Grid.RowDefinitions>
         <Menu VerticalAlignment="Center">
-            <MenuItem FontSize="10" Header="主页"></MenuItem>
-            <MenuItem FontSize="10" Header="参数"></MenuItem>
+            <MenuItem FontSize="10" Header="主页" Command="{mvvm:ActionAuto ChooseHomePage}"></MenuItem>
+            <MenuItem FontSize="10" Header="参数" Command="{mvvm:ActionAuto ChooseParameterPage}"></MenuItem>
         </Menu>
         <local:HomePage Grid.Row="1" Visibility="{Binding HomePageVisibility,FallbackValue=Visible}"></local:HomePage>
+        <local:ParameterPage Grid.Row="1" Visibility="{Binding ParameterPageVisibility,FallbackValue=Collapsed}"></local:ParameterPage>
+        <StatusBar Grid.Row="3">
+            <StatusBar.Resources>
+                <Style TargetType="Ellipse" x:Key="EllipseStatusBase">
+                    <Setter Property="Fill" Value="Red"></Setter>
+                    <Setter Property="Width" Value="16"></Setter>
+                    <Setter Property="Height" Value="16"></Setter>
+                </Style>
+                <Style TargetType="Ellipse" BasedOn="{StaticResource EllipseStatusBase}" x:Key="PLCConnectStatus">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsPLCConnect}" Value="true">
+                            <Setter Property="Fill" Value="Green"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+                <Style TargetType="Ellipse" BasedOn="{StaticResource EllipseStatusBase}" x:Key="ScanConnectStatus">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsScanConnect}" Value="true">
+                            <Setter Property="Fill" Value="Green"></Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </StatusBar.Resources>
+            <StatusBarItem>
+                <TextBlock>PLC</TextBlock>
+            </StatusBarItem>
+            <StatusBarItem>
+                <Ellipse Style="{StaticResource PLCConnectStatus}"></Ellipse>
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock>扫码枪</TextBlock>
+            </StatusBarItem>
+            <StatusBarItem>
+                <Ellipse Style="{StaticResource ScanConnectStatus}"></Ellipse>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </control:MetroWindow>

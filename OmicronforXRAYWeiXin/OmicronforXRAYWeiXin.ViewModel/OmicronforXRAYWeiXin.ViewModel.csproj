@@ -54,6 +54,7 @@
     <Compile Include="dialog.cs" />
     <Compile Include="MainDataContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scan.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

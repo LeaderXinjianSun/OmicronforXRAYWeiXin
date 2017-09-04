@@ -1,0 +1,33 @@
+﻿<UserControl x:Class="OmicronforXRAYWeiXin.ParameterPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mvvm="clr-namespace:BingLibrary.hjb;assembly=BingLibrary"
+             xmlns:local="clr-namespace:OmicronforXRAYWeiXin"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <GroupBox Header="串口">
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation ="Horizontal" Margin="5,5,0,0">
+                    <TextBlock VerticalAlignment ="Center" FontSize ="18" Width="70"  Text="PLC"></TextBlock>
+                    <ComboBox Width="100" VerticalContentAlignment="Center" Margin="5,2,0,2"  x:Name="Com" Text="{Binding SerialPortCom}" DropDownClosed="Com_DropDownClosed" DropDownOpened="ComboBox_DropDownOpened" IsEditable="True" IsReadOnly="True"></ComboBox>
+                </StackPanel>
+                <StackPanel Orientation ="Horizontal" Margin="5,5,0,0">
+                    <TextBlock VerticalAlignment ="Center" FontSize ="18" Width="70"  Text="扫码枪"></TextBlock>
+                    <ComboBox Width="100" VerticalContentAlignment="Center" Margin="5,2,0,2"  x:Name="Com1" Text="{Binding ScanCom}" DropDownOpened="Com1_DropDownOpened" DropDownClosed="Com1_DropDownClosed" IsEditable="True" IsReadOnly="True"></ComboBox>
+                </StackPanel>
+                <TextBlock VerticalAlignment ="Center" FontSize ="18" Text="波特率： 19200&#13;数据位： 8&#13;停止位： 1&#13;奇偶校验： Even"></TextBlock>
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+</UserControl>
