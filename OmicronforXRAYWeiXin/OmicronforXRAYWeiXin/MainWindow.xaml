@@ -7,7 +7,7 @@
         xmlns:mvvm="clr-namespace:BingLibrary.hjb;assembly=BingLibrary"
         xmlns:local="clr-namespace:OmicronforXRAYWeiXin"
         mc:Ignorable="d"
-        Title="OmicronforXRAY WeiXin2017090201" WindowStartupLocation="CenterScreen"
+        Title="OmicronforXRAY WeiXin2017092201" WindowStartupLocation="CenterScreen"
                      BorderThickness="0" GlowBrush="Black"  ResizeMode="CanResizeWithGrip" WindowTransitionsEnabled="True"
                      Icon="/picture/libreoffice_math_64px_1172069_easyicon.net.ico" Height="600" Width="800" DataContext="{mvvm:Data md}" Closing="MetroWindow_Closing">
     <Grid>

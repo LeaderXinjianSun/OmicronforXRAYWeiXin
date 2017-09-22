@@ -8,6 +8,18 @@
              mc:Ignorable="d" 
              d:DesignHeight="768" d:DesignWidth="1024">
     <Grid>
+        <Grid.Resources>
+            <Style TargetType="{x:Type TextBox}" x:Key="TextBoxBase">
+                <Setter Property="FontSize" Value="15"></Setter>
+                <Setter Property="Margin" Value="5,0,0,0"></Setter>
+                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
+            </Style>
+            <Style TargetType="TextBlock" x:Key="TextBlockBase">
+                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                <Setter Property="FontSize" Value="18"></Setter>
+            </Style>
+        </Grid.Resources>
         <Grid.ColumnDefinitions>
             <ColumnDefinition></ColumnDefinition>
             <ColumnDefinition></ColumnDefinition>
@@ -27,6 +39,14 @@
                     <ComboBox Width="100" VerticalContentAlignment="Center" Margin="5,2,0,2"  x:Name="Com1" Text="{Binding ScanCom}" DropDownOpened="Com1_DropDownOpened" DropDownClosed="Com1_DropDownClosed" IsEditable="True" IsReadOnly="True"></ComboBox>
                 </StackPanel>
                 <TextBlock VerticalAlignment ="Center" FontSize ="18" Text="波特率： 19200&#13;数据位： 8&#13;停止位： 1&#13;奇偶校验： Even"></TextBlock>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Grid.Column="1" Header="MES">
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Style="{StaticResource TextBlockBase}" Text="MAC "></TextBlock>
+                    <TextBox Width="300" Text="{Binding MACString}"></TextBox>
+                </StackPanel>
             </StackPanel>
         </GroupBox>
     </Grid>

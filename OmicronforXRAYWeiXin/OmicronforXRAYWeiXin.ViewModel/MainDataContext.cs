@@ -7,6 +7,7 @@ using BingLibrary.hjb;
 using BingLibrary.hjb.Intercepts;
 using System.ComponentModel.Composition;
 using MESBadMarkReflection;
+using OfficeOpenXml;
 
 namespace OmicronforXRAYWeiXin.ViewModel
 {
@@ -23,6 +24,7 @@ namespace OmicronforXRAYWeiXin.ViewModel
         public virtual string SerialPortCom { set; get; }
         public virtual bool IsPLCConnect { set; get; } = false;
         public virtual bool IsScanConnect { set; get; } = false;
+        public virtual string MACString { set; get; }
         #endregion
         #region 变量
         private string MessageStr = "";
@@ -35,6 +37,7 @@ namespace OmicronforXRAYWeiXin.ViewModel
         {
             ScanCom = Inifile.INIGetStringValue(iniParameterPath, "Com", "ScanCom", "COM1");
             SerialPortCom = Inifile.INIGetStringValue(iniParameterPath, "Com", "SerialPortCom", "COM1");
+            MACString = Inifile.INIGetStringValue(iniParameterPath, "MES", "MAC", "14-B3-1F-02-2D-83");
             Scan.ini(ScanCom);
         }
         #endregion
@@ -52,7 +55,7 @@ namespace OmicronforXRAYWeiXin.ViewModel
                 //entity.BarCode = "PJ6RN178V08SP";
                 entity.BarCode = str;
                 entity.MachineName = "";
-                entity.MAC = "14-B3-1F-02-2D-83";
+                entity.MAC = MACString;
                 entity.OperatorName = "";
                 entity.Panel = "5";
                 var aa = reflectionData.GetPanelInfo(entity);
@@ -76,6 +79,7 @@ namespace OmicronforXRAYWeiXin.ViewModel
         {
             HomePageVisibility = "Visible";
             ParameterPageVisibility = "Collapsed";
+            Inifile.INIWriteValue(iniParameterPath, "MES", "MAC", MACString);
         }
         public void ChooseParameterPage()
         {

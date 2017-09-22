@@ -633,7 +633,40 @@ namespace BingLibrary.hjb
             }
             catch { return false; }
         }
-
+        //SetMultiM("M2000" , "11110000111100001");
+        public void SetMultiM(string startcoil, string datastr)
+        {
+            int len = datastr.Length;
+            int shang = len / 8;
+            int yushu = len % 8;
+            string s1 = "";
+            for (int i = 0; i < shang; i++)
+            {
+                string s = datastr.Substring(i * 8, 8);
+                s = changestring(s);
+                int a = Convert.ToInt32(s, 2);
+                s1 = s1 + a.ToString("X2");
+            }
+            if (yushu > 0)
+            {
+                string s = datastr.Substring(shang * 8, yushu);
+                s = changestring(s);
+                int a = Convert.ToInt32(s, 2);
+                s1 = s1 + a.ToString("X2");
+            }
+            string nums = ((shang + 1) * 8).ToString("X4");
+            PLCWriteBit("01", startcoil, nums, s1);
+        }
+        private string changestring(string oldstring)
+        {
+            int len = oldstring.Length;
+            string newstr = "";
+            for (int i = len - 1; i >= 0; i--)
+            {
+                newstr += oldstring[i];
+            }
+            return newstr;
+        }
         private void SPRead()
         {
             while (curSerialPort.IsOpen)
