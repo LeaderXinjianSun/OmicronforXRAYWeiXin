@@ -532,10 +532,11 @@ namespace BingLibrary.hjb
             try
             {
                 string r = PLCRead("D", x);
-                string t1 = r.Substring(0, 4);
-                string t2 = r.Remove(0, 4);
-                string t3 = t2 + t1;
-                double d = Convert.ToInt32(t3, 16);
+                //string t1 = r.Substring(0, 4);
+                //string t2 = r.Remove(0, 4);
+                //string t3 = t2 + t1;
+                //double d = Convert.ToInt32(t3, 16);
+                double d = Convert.ToInt32(r, 16);
                 return d != 0 ? d : 0;
             }
             catch { return 0; }

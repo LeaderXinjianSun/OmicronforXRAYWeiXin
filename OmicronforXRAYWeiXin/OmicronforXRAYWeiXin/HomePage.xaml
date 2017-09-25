@@ -28,6 +28,7 @@
             <Button HorizontalAlignment="Right" Width="80" Content="扫码" FontSize="16" Margin="5,10" Command="{mvvm:ActionAuto ScanAction}"></Button>
             <TextBlock Text="工位2条码:" FontSize="16"></TextBlock>
             <TextBox Width="180" IsReadOnly="True" Text="{Binding BarcodeString2}" Margin="5,10"></TextBox>
+            <Button Content="Func" Width="30" HorizontalAlignment="Right" Margin="0,0,10,0" Command="{mvvm:ActionAuto FunctionTest}"></Button>
         </StackPanel>
     </Grid>
 </UserControl>

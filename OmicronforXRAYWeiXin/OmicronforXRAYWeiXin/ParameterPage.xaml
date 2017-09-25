@@ -49,5 +49,14 @@
                 </StackPanel>
             </StackPanel>
         </GroupBox>
+        <GroupBox Grid.Row="1" Header="坐标">
+            <StackPanel>
+                <StackPanel Orientation ="Horizontal" Margin="5,5,0,0">
+                    <TextBlock VerticalAlignment ="Center" FontSize ="18" Width="70"  Text="起始点"></TextBlock>
+                    <Button Content="计算" Command="{mvvm:ActionAuto CalcCoor}"></Button>
+                </StackPanel>
+            </StackPanel>
+            
+        </GroupBox>
     </Grid>
 </UserControl>

@@ -8,6 +8,8 @@ using BingLibrary.hjb.Intercepts;
 using System.ComponentModel.Composition;
 using MESBadMarkReflection;
 using OfficeOpenXml;
+using System.IO;
+using System.Windows;
 
 namespace OmicronforXRAYWeiXin.ViewModel
 {
@@ -31,6 +33,9 @@ namespace OmicronforXRAYWeiXin.ViewModel
         private XinjiePlc XinjiePLC;
         private string iniParameterPath = System.Environment.CurrentDirectory + "\\Parameter.ini";
         ReflectionData reflectionData = new ReflectionData();
+        private string CoorExcelFile = System.Environment.CurrentDirectory + "\\坐标.xlsx";
+        //private double[,] CoorExcel = new double[2, 20];
+        private List<Coor> AxisCoorList= new List<Coor>();
         #endregion
         #region 构造函数
         public MainDataContext()
@@ -39,9 +44,17 @@ namespace OmicronforXRAYWeiXin.ViewModel
             SerialPortCom = Inifile.INIGetStringValue(iniParameterPath, "Com", "SerialPortCom", "COM1");
             MACString = Inifile.INIGetStringValue(iniParameterPath, "MES", "MAC", "14-B3-1F-02-2D-83");
             Scan.ini(ScanCom);
+            ImportDatefromExcel();
+            
+            //Console.WriteLine(Convert.ToString(16, 16));
         }
         #endregion
         #region 功能与方法
+        public void FunctionTest()
+        {
+            CalcCoor();
+            //XinjiePLC.WriteD(4200, "-123");
+        }
         public void ScanAction()
         {
             Scan.GetBarCode(ScanActionCallback);
@@ -95,6 +108,74 @@ namespace OmicronforXRAYWeiXin.ViewModel
             }
             MessageStr += "\n" + System.DateTime.Now.ToString() + " " + str;
             return MessageStr;
+        }
+        private bool ImportDatefromExcel()
+        {
+            #region check file if exists
+            FileStream stream = null;
+            try
+            {
+                //stream = new FileStream(dialog.FileName, FileMode.Open);
+                stream = File.OpenRead(CoorExcelFile);
+            }
+            catch (IOException ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
+            #endregion
+            using (stream)
+            {
+                ExcelPackage package = new ExcelPackage(stream);
+                ExcelWorksheet sheet = package.Workbook.Worksheets[1];
+                #region get last row index
+                int lastRow = sheet.Dimension.End.Row;
+                while (sheet.Cells[lastRow, 1].Value == null)
+                {
+                    lastRow--;
+                }
+                #endregion
+                for (int i = 0; i < lastRow - 1; i++)
+                {
+                    try
+                    {
+                        Coor myCoor;
+                        myCoor.x = double.Parse(sheet.Cells[i + 2, 2].Value.ToString());
+                        myCoor.y = double.Parse(sheet.Cells[i + 2, 3].Value.ToString());
+                        AxisCoorList.Add(myCoor);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                        return false;
+                    }
+                    
+                }
+                return true;
+            }
+
+        }
+        
+        public void CalcCoor()
+        {
+            //0.0075
+            if (IsPLCConnect)
+            {
+                double x0 = XinjiePLC.ReadD(4100);
+                double y0 = XinjiePLC.ReadD(4102);
+                for (int i = 0; i < AxisCoorList.Count; i++)
+                {
+                    double new_x = AxisCoorList[i].x / 0.0075 + x0;
+                    double new_y = AxisCoorList[i].y / 0.0075 + y0;
+                    //XinjiePLC.WriteD(4200, "-123");
+                    XinjiePLC.WriteD(5000 + i * 2, Convert.ToInt32(new_x).ToString());
+                    XinjiePLC.WriteD(5200 + i * 2, Convert.ToInt32(new_y).ToString());
+                }
+            }
+            else
+            {
+                MsgText = AddMessage("无法计算：PLC未连接");
+            }
         }
         #endregion
         #region PLC
@@ -170,5 +251,10 @@ namespace OmicronforXRAYWeiXin.ViewModel
         [Export(MEF.Contracts.Data)]
         [ExportMetadata(MEF.Key, "md")]
         MainDataContext md = MainDataContext.New<MainDataContext>();
+    }
+    struct Coor
+    {
+        public double x;
+        public double y;
     }
 }
