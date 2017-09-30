@@ -52,7 +52,15 @@
         <GroupBox Grid.Row="1" Header="坐标">
             <StackPanel>
                 <StackPanel Orientation ="Horizontal" Margin="5,5,0,0">
+                    <TextBlock VerticalAlignment ="Center" FontSize ="18" Width="70"  Text="料号"></TextBlock>
+                    <ComboBox Width="100" VerticalContentAlignment="Center" Margin="5,2,0,2"  x:Name="LiaoHao" DropDownClosed="LiaoHao_DropDownClosed" IsEditable="True" IsReadOnly="True" SelectedIndex="{Binding LiaoHaoSelectedIndex}">
+                        <ComboBoxItem Content="8788"></ComboBoxItem>
+                        <ComboBoxItem Content="8990"></ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Orientation ="Horizontal" Margin="5,5,0,0">
                     <TextBlock VerticalAlignment ="Center" FontSize ="18" Width="70"  Text="起始点"></TextBlock>
+                    <TextBlock VerticalAlignment ="Center" Text="{Binding XYCoorStr}"></TextBlock>
                     <Button Content="计算" Command="{mvvm:ActionAuto CalcCoor}"></Button>
                 </StackPanel>
             </StackPanel>

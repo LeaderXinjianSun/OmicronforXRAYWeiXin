@@ -27,6 +27,8 @@ namespace OmicronforXRAYWeiXin.ViewModel
         public virtual bool IsPLCConnect { set; get; } = false;
         public virtual bool IsScanConnect { set; get; } = false;
         public virtual string MACString { set; get; }
+        public virtual string XYCoorStr { set; get; } = "0 , 0";
+        public virtual int LiaoHaoSelectedIndex { set; get; } = 0;
         #endregion
         #region 变量
         private string MessageStr = "";
@@ -43,8 +45,9 @@ namespace OmicronforXRAYWeiXin.ViewModel
             ScanCom = Inifile.INIGetStringValue(iniParameterPath, "Com", "ScanCom", "COM1");
             SerialPortCom = Inifile.INIGetStringValue(iniParameterPath, "Com", "SerialPortCom", "COM1");
             MACString = Inifile.INIGetStringValue(iniParameterPath, "MES", "MAC", "14-B3-1F-02-2D-83");
+            LiaoHaoSelectedIndex = int.Parse(Inifile.INIGetStringValue(iniParameterPath, "LiaoHao", "SelectIndex", "0"));
             Scan.ini(ScanCom);
-            ImportDatefromExcel();
+            //ImportDatefromExcel();
             
             //Console.WriteLine(Convert.ToString(16, 16));
         }
@@ -52,8 +55,18 @@ namespace OmicronforXRAYWeiXin.ViewModel
         #region 功能与方法
         public void FunctionTest()
         {
-            CalcCoor();
+            //CalcCoor();
             //XinjiePLC.WriteD(4200, "-123");
+
+            //XinjiePLC.SetMultiM("M2000","01010010111");
+            Entity entity = new Entity();
+            entity.BarCode = "PJ6RN178V08SP";
+            //entity.BarCode = str;
+            entity.MachineName = "";
+            entity.MAC = MACString;
+            entity.OperatorName = "";
+            entity.Panel = "0";
+            var aa = reflectionData.GetPanelInfo(entity);
         }
         public void ScanAction()
         {
@@ -61,32 +74,60 @@ namespace OmicronforXRAYWeiXin.ViewModel
         }
         private void ScanActionCallback(string str)
         {
-            if (str != "Error")
+            try
             {
-                BarcodeString1 = str;
-                Entity entity = new Entity();
-                //entity.BarCode = "PJ6RN178V08SP";
-                entity.BarCode = str;
-                entity.MachineName = "";
-                entity.MAC = MACString;
-                entity.OperatorName = "";
-                entity.Panel = "5";
-                var aa = reflectionData.GetPanelInfo(entity);
-                if (aa[0] == "0")
+                if (str != "Error")
                 {
-                    MsgText = AddMessage("扫码成功：" + str);
-                    XinjiePLC.SetM(307, true);
+                    BarcodeString1 = str;
+                    Entity entity = new Entity();
+                    //entity.BarCode = "PJ6RN178V08SP";
+                    //entity.BarCode = str;
+                    //entity.MachineName = "";
+                    entity.MAC = MACString;
+                    //entity.OperatorName = str;
+                    entity.Panel = str;
+                    string[] aa = reflectionData.GetPanelInfo(entity);
+                    if (aa[0] == "0")
+                    {
+
+                        string ss = "";
+                        for (int i = 1; i < aa.Length; i++)
+                        {
+                            if (aa[i] == "OK")
+                            {
+                                ss += "1";
+                            }
+                            else
+                            {
+                                ss += "0";
+                            }
+                        }
+                        XinjiePLC.SetMultiM("M2000", ss);
+                        MsgText = AddMessage("扫码成功：" + str + " " + ss);
+                        XinjiePLC.SetM(307, true);
+                        XinjiePLC.SetM(306, true);
+                    }
+                    else
+                    {
+                        MsgText = AddMessage("查询失败：" + aa[1]);
+                        XinjiePLC.SetM(307, false);
+                        XinjiePLC.SetM(306, true);
+                    }
+
                 }
                 else
                 {
-                    MsgText = AddMessage("查询失败：" + aa[1]);
+                    MsgText = AddMessage("扫码失败：" + str);
+                    XinjiePLC.SetM(307, false);
+                    XinjiePLC.SetM(306, true);
                 }
-                
             }
-            else
+            catch (Exception ex)
             {
-                MsgText = AddMessage("扫码失败：" + str);
-            }           
+
+                MessageBox.Show(ex.Message);
+            }
+                    
         }
         public void ChooseHomePage()
         {
@@ -127,7 +168,7 @@ namespace OmicronforXRAYWeiXin.ViewModel
             using (stream)
             {
                 ExcelPackage package = new ExcelPackage(stream);
-                ExcelWorksheet sheet = package.Workbook.Worksheets[1];
+                ExcelWorksheet sheet = package.Workbook.Worksheets[1 + LiaoHaoSelectedIndex];
                 #region get last row index
                 int lastRow = sheet.Dimension.End.Row;
                 while (sheet.Cells[lastRow, 1].Value == null)
@@ -135,6 +176,7 @@ namespace OmicronforXRAYWeiXin.ViewModel
                     lastRow--;
                 }
                 #endregion
+                AxisCoorList.Clear();
                 for (int i = 0; i < lastRow - 1; i++)
                 {
                     try
@@ -146,7 +188,7 @@ namespace OmicronforXRAYWeiXin.ViewModel
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message);
+                        MessageBox.Show(ex.Message + i.ToString());
                         return false;
                     }
                     
@@ -159,10 +201,12 @@ namespace OmicronforXRAYWeiXin.ViewModel
         public void CalcCoor()
         {
             //0.0075
+            ImportDatefromExcel();
             if (IsPLCConnect)
             {
-                double x0 = XinjiePLC.ReadD(4100);
-                double y0 = XinjiePLC.ReadD(4102);
+                double x0 = XinjiePLC.ReadD(4100 + LiaoHaoSelectedIndex * 4);
+                double y0 = XinjiePLC.ReadD(4102 + LiaoHaoSelectedIndex * 4);
+                XYCoorStr = (x0 * 0.0075).ToString() + " , " + (y0 * 0.0075).ToString();
                 for (int i = 0; i < AxisCoorList.Count; i++)
                 {
                     double new_x = AxisCoorList[i].x / 0.0075 + x0;
@@ -171,6 +215,8 @@ namespace OmicronforXRAYWeiXin.ViewModel
                     XinjiePLC.WriteD(5000 + i * 2, Convert.ToInt32(new_x).ToString());
                     XinjiePLC.WriteD(5200 + i * 2, Convert.ToInt32(new_y).ToString());
                 }
+                XinjiePLC.WriteW(4118, AxisCoorList.Count.ToString());
+                MessageBox.Show("计算完成");
             }
             else
             {
@@ -183,6 +229,7 @@ namespace OmicronforXRAYWeiXin.ViewModel
         public void PLCWork()
         {
             bool M305 = false, m305 = false;
+            bool M309 = false, m309 = false;
             while (true)
             {
                 System.Threading.Thread.Sleep(100);
@@ -213,16 +260,23 @@ namespace OmicronforXRAYWeiXin.ViewModel
                     if (m305 != M305)
                     {
                         m305 = M305;
+                        XinjiePLC.SetM(306, false);
                         if (M305)
                         {
-                            XinjiePLC.SetM(306,false);
-                            XinjiePLC.SetM(307, false);
+                            
+                            
                             ScanAction();
-                            XinjiePLC.SetM(306, true);
+                            //System.Threading.Thread.Sleep(100);
+                            
                         }
-                        else
+                    }
+                    M309 = XinjiePLC.ReadM(309);
+                    if (m309 != M309)
+                    {
+                        m309 = M309;
+                        if (m309)
                         {
-                            XinjiePLC.SetM(306, false);
+                            BarcodeString2 = BarcodeString1;
                         }
                     }
                 }

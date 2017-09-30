@@ -77,5 +77,11 @@ namespace OmicronforXRAYWeiXin
         {
             Inifile.INIWriteValue(iniParameterPath, "Com", "SerialPortCom", Com.Text);
         }
+
+        private void LiaoHao_DropDownClosed(object sender, EventArgs e)
+        {
+            Inifile.INIWriteValue(iniParameterPath, "LiaoHao", "SelectIndex", LiaoHao.SelectedIndex.ToString());
+        }
+
     }
 }
